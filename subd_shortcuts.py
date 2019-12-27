@@ -9,7 +9,6 @@ bl_info = {
 
 C = bpy.context
 D = bpy.data
-AO = bpy.context.active_object
 
 subd_level = 0
 
@@ -22,10 +21,11 @@ class IncreaseViewSubD(bpy.types.Operator):
     
     def execute(self, context):
         global subd_level
+        AO = context.active_object
         if 'Subdivision' in AO.modifiers.keys():
             mod = AO.modifiers['Subdivision']
             mod.levels += 1
-
+            
             subd_level = mod.levels
         else:
             bpy.ops.object.modifier_add(type='SUBSURF')
@@ -42,6 +42,7 @@ class DecreaseViewSubD(bpy.types.Operator):
 
     def execute(self, context):
         global subd_level
+        AO = context.active_object
         if 'Subdivision' in AO.modifiers.keys():
             mod = AO.modifiers['Subdivision']
             if mod.levels > 0: mod.levels -= 1
@@ -61,7 +62,8 @@ class ToggleViewSubD(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        
+        global subd_level
+        AO = context.active_object
         if 'Subdivision' in AO.modifiers.keys():
             mod = AO.modifiers['Subdivision']
             if mod.levels > 0: mod.levels = 0
@@ -69,7 +71,9 @@ class ToggleViewSubD(bpy.types.Operator):
         else:
             bpy.ops.object.modifier_add(type='SUBSURF')
             mod = AO.modifiers['Subdivision']
-            mod.levels = 0
+            mod.levels = 1
+
+            subd_level = mod.levels
 
         return {'FINISHED'}
 
